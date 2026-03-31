@@ -30,11 +30,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -49,7 +49,7 @@ import reactor.core.publisher.Mono;
  allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
  origins = "*"
 )
-@Api(value="/petclinic/api/vets", tags = {"Veterinarians Api"})
+@Tag(name = "Veterinarians Api")
 public class VetReactiveController {
     
     /** Logger for the class. */
@@ -73,10 +73,10 @@ public class VetReactiveController {
      */
     @PreAuthorize("hasRole(@roles.VET_ADMIN)" )
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all veterinarians in database", response=Vet.class)
+    @Operation(summary = "Read all veterinarians in database")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of veterinarians"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "List of veterinarians"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Flux<Vet> getAllVets() {
         LOGGER.info("Listing vets");
         return vetServices.findAllVets();
@@ -91,11 +91,11 @@ public class VetReactiveController {
      *      a {@link Mono} of {@link VetEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{vetId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information by its unique identifier", response=Vet.class)
+    @Operation(summary = "Retrieve veterinarian information by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "the identifier exists and related veterinarian is returned"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "the identifier exists and related veterinarian is returned"), 
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Vet>> getVet(@PathVariable("vetId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Veterinarian") String vetId) {
@@ -116,11 +116,11 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new veterinarian, an unique identifier is generated and returned", response=Vet.class)
+    @Operation(summary = "Create a new veterinarian, an unique identifier is generated and returned")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The veterinarian has been created, uuid is provided in header"),
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The veterinarian has been created, uuid is provided in header"),
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Vet>> createVet(UriComponentsBuilder uc, 
             @RequestBody @Valid Vet vet) {
         vet.setId(UUID.randomUUID());
@@ -142,11 +142,11 @@ public class VetReactiveController {
      *      the create vet.
      */
     @PutMapping(value="/{vetId}", produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a veterinarian (no read before write as for Cassandra)", response=Vet.class)
+    @Operation(summary = "Upsert a veterinarian (no read before write as for Cassandra)")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The veterinarian has been created, uuid is provided in header"),
-        @ApiResponse(code = 400, message= "The vet bean was malformed or does not provide valid id"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The veterinarian has been created, uuid is provided in header"),
+        @ApiResponse(responseCode = "400", description = "The vet bean was malformed or does not provide valid id"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Vet>> upsert(
             UriComponentsBuilder uc, 
             @PathVariable("vetId") String vetId, 
@@ -166,11 +166,11 @@ public class VetReactiveController {
      * @return
      */
     @DeleteMapping("/{vetId}")
-    @ApiOperation(value= "Delete a veterinarian by its unique identifier", response=Void.class)
+    @Operation(summary = "Delete a veterinarian by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 204, message= "The veterinarian has been deleted"),
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "204", description = "The veterinarian has been deleted"),
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("vetId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a Veterinarian") @NotBlank String vetId) {

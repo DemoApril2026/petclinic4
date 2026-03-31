@@ -11,19 +11,19 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.3.RELEASE</version>
+		<version>2.7.18</version>
 	</parent>
 
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<cassandra-java-driver.version>4.9.0</cassandra-java-driver.version>
 		<cassandra-native-protocol.version>1.4.11</cassandra-native-protocol.version>
-		<springfox.version>3.0.0</springfox.version>
+		<springdoc.version>1.7.0</springdoc.version>
 		<jkube.version>1.0.2</jkube.version>
 		<slf4j.version>1.7.30</slf4j.version>
-		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
+		<spring-cloud.version>2021.0.9</spring-cloud.version>
 		<maven.test.skip>false</maven.test.skip>
 	</properties>
 
@@ -48,11 +48,11 @@
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 		
-		<!-- Api documentation -->
+		<!-- Api documentation (springdoc-openapi for WebFlux) -->
 		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-boot-starter</artifactId>
-			<version>${springfox.version}</version>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-webflux-ui</artifactId>
+			<version>${springdoc.version}</version>
 		</dependency>
 		
 		<!-- AuthenticationAuthorization -->

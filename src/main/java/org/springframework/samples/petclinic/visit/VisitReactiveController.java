@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -50,7 +50,7 @@ import reactor.core.publisher.Mono;
  allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
  origins = "*"
 )
-@Api(value="/api/visits", tags = {"Visit Api"})
+@Tag(name = "Visit Api")
 public class VisitReactiveController {
     
     /** Implementation of Crud operations for visits. */
@@ -70,10 +70,10 @@ public class VisitReactiveController {
      *   a {@link Flux} containing {@link PetEntity}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all visits in database", response=Visit.class)
+    @Operation(summary = "Read all visits in database")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of visits (even if empty)"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "List of visits (even if empty)"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Flux<Visit> findAllVisits() {
         return visitService.findAllVisits();
     }
@@ -87,12 +87,12 @@ public class VisitReactiveController {
      *      a {@link Mono} of {@link Visit} or empty response with not found (404) code
      */
     @GetMapping(value = "/{visitId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve visit information by its unique identifier", response=Visit.class)
+    @Operation(summary = "Retrieve visit information by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "the identifier exists and related visit is returned"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "the identifier exists and related visit is returned"), 
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"), 
+        @ApiResponse(responseCode = "404", description = "the identifier does not exist in DB"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Visit>> findVisitById(
             @NotBlank
             @PathVariable("visitId") 
@@ -115,12 +115,11 @@ public class VisitReactiveController {
      *      the created owner.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new visit, an unique identifier is generated and returned", 
-                  response=Visit.class)
+    @Operation(summary = "Create a new visit, an unique identifier is generated and returned")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The visit was malformed"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The visit has been created, uuid is provided in header"), 
+        @ApiResponse(responseCode = "400", description = "The visit was malformed"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Visit>> createVisit(
             UriComponentsBuilder uc,
             @RequestBody @Valid Visit visit) {
@@ -144,12 +143,11 @@ public class VisitReactiveController {
     @PutMapping(value="/{visitId}",  
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a pet (no read before write as for Cassandra)", 
-                  response=Visit.class)
+    @Operation(summary = "Upsert a pet (no read before write as for Cassandra)")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The visit has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The visit was malformed or uid was not valid"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The visit has been created, uuid is provided in header"), 
+        @ApiResponse(responseCode = "400", description = "The visit was malformed or uid was not valid"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Visit>> upsertVisit(
             UriComponentsBuilder uc, 
             @PathVariable("visitId") @NotBlank String visitId, 
@@ -166,11 +164,11 @@ public class VisitReactiveController {
      * @return
      */
     @DeleteMapping("/{visitId}")
-    @ApiOperation(value= "Delete a visit by its unique identifier", response=Void.class)
+    @Operation(summary = "Delete a visit by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 204, message= "The pet has been deleted"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "204", description = "The pet has been deleted"), 
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("visitId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a visit") @NotBlank String visitId) {

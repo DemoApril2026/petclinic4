@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Mono;
 
 /**
@@ -40,7 +40,7 @@ import reactor.core.publisher.Mono;
  allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
  origins = "*"
 )
-@Api(value="/petclinic/api/pettypes", tags = {"Pet Types Api"})
+@Tag(name = "Pet Types Api")
 public class PetTypeReactiveController {
     
     /** Inject service implementation layer. */
@@ -58,21 +58,20 @@ public class PetTypeReactiveController {
      *      A set of all pets
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all pet types from database", 
-                  response=PetType.class)
+    @Operation(summary = "Read all pet types from database")
     @ApiResponses({
-      @ApiResponse(code = 200, message= "List of pet types"), 
-      @ApiResponse(code = 500, message= "Internal technical error") })
+      @ApiResponse(responseCode = "200", description = "List of pet types"), 
+      @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Set<PetType>>> getAllPetTypes() {
         return petServices.findAllPetTypes().map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{petTypeId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve pet information information by its unique identifier", response=PetType.class)
+    @Operation(summary = "Retrieve pet information information by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "the identifier exists and related pet type is returned"), 
-        @ApiResponse(code = 400, message= "The name was not valid"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })        
+        @ApiResponse(responseCode = "200", description = "the identifier exists and related pet type is returned"), 
+        @ApiResponse(responseCode = "400", description = "The name was not valid"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })        
     public Mono<ResponseEntity<PetType>> getType(
             @PathVariable("petTypeId") 
             @Parameter(required = true,example = "surgery",

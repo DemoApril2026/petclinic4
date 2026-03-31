@@ -5,7 +5,7 @@
 # Build everywhere
 ####################################################################
 
-FROM maven:3.6.3-openjdk-11 AS MAVEN_BUILD
+FROM maven:3.9-eclipse-temurin-17 AS MAVEN_BUILD
 MAINTAINER Cedrick Lunven
 COPY pom.xml /build/
 COPY src /build/src/
@@ -20,7 +20,7 @@ RUN mvn package
 # of intermediate layers and leveraging on Docker Cache.
 ####################################################################
 
-FROM adoptopenjdk:11-jre-hotspot as LAYERS_BUILD
+FROM eclipse-temurin:17-jre as LAYERS_BUILD
 WORKDIR application
 ARG JAR_FILE=/build/target/*.jar
 COPY --from=MAVEN_BUILD ${JAR_FILE} application.jar
@@ -33,7 +33,7 @@ RUN java -Djarmode=layertools -jar application.jar extract
 # of intermediate layers and leveraging on Docker Cache.
 ####################################################################
 
-FROM adoptopenjdk:11-jre-hotspot
+FROM eclipse-temurin:17-jre
 WORKDIR application
 EXPOSE 9966
 EXPOSE 9967
