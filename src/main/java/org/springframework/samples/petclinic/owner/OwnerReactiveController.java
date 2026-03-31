@@ -26,11 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono;
  */
 @RestController
 @RequestMapping("/petclinic/api/owners")
-@Api(value="/api/owners", tags = {"Owners Api"})
+@Tag(name = "Owners Api")
 @CrossOrigin(
  methods = {PUT, POST, GET, OPTIONS, DELETE, PATCH},
  maxAge = 3600, allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"}, origins = "*"
@@ -66,10 +66,10 @@ public class OwnerReactiveController {
      *      list of Owners matching the term
      */
     @GetMapping(value = "/*/lastname/{lastName}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Search owner by their lastName", response=Owner.class)
+    @Operation(summary = "Search owner by their lastName")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of owners matching the lastname"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "List of owners matching the lastname"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Flux<Owner> searchOwnersByName(@PathVariable("lastName") String searchString) {
        return ownerServices.findOwnersByName(searchString);
     }
@@ -81,10 +81,10 @@ public class OwnerReactiveController {
      *   a {@link Flux} containing {@link VetEntity}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all owners in database", response=Owner.class)
+    @Operation(summary = "Read all owners in database")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of owners (even if empty)"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "List of owners (even if empty)"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Flux<Owner> findAllOwners() {
         return ownerServices.findAllOwners();     
     }
@@ -98,12 +98,12 @@ public class OwnerReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{ownerId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve owner information by its unique identifier", response=Owner.class)
+    @Operation(summary = "Retrieve owner information by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "the identifier exists and related owner is returned"), 
-        @ApiResponse(code = 400, message= "The identifier was not a valid UUID"),
-        @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "the identifier exists and related owner is returned"), 
+        @ApiResponse(responseCode = "400", description = "The identifier was not a valid UUID"),
+        @ApiResponse(responseCode = "404", description = "the identifier does not exist in DB"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Owner>> findOwner(@PathVariable("ownerId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of an Owner") String ownerId) {
@@ -123,12 +123,11 @@ public class OwnerReactiveController {
      *      the created owner.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new owner, an unique identifier is generated and returned", 
-                  response=Owner.class)
+    @Operation(summary = "Create a new owner, an unique identifier is generated and returned")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The JSON body was not a valid JSON or does not match Owner structure"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The owner has been created, uuid is provided in header"), 
+        @ApiResponse(responseCode = "400", description = "The JSON body was not a valid JSON or does not match Owner structure"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Owner>> createOwner(
             UriComponentsBuilder uc, @RequestBody Owner owner) {
       Objects.requireNonNull(owner);
@@ -152,12 +151,11 @@ public class OwnerReactiveController {
     @PutMapping(value="/{ownerId}",  
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a owner (no read before write as for Cassandra)", 
-                  response=Owner.class)
+    @Operation(summary = "Upsert a owner (no read before write as for Cassandra)")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The owner has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The JSON body was malformed or does not match Owner structure"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The owner has been created, uuid is provided in header"), 
+        @ApiResponse(responseCode = "400", description = "The JSON body was malformed or does not match Owner structure"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Owner>> upsertOwner(
             UriComponentsBuilder uc, 
             @PathVariable("ownerId") String ownerId, 
@@ -174,11 +172,11 @@ public class OwnerReactiveController {
      * @return
      */
     @DeleteMapping("/{ownerId}")
-    @ApiOperation(value= "Delete a owner by its unique identifier", response=Void.class)
+    @Operation(summary = "Delete a owner by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 204, message= "The owner has been deleted"), 
-        @ApiResponse(code = 400, message= "The identifier was not a valid UUID"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "204", description = "The owner has been deleted"), 
+        @ApiResponse(responseCode = "400", description = "The identifier was not a valid UUID"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(@PathVariable("ownerId") @Parameter(
             required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
             description = "Unique identifier of a owner") String ownerId) {

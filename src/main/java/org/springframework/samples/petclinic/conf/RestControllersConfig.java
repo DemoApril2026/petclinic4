@@ -37,7 +37,7 @@ public class RestControllersConfig {
     public Mono<Void> redir(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.SEE_OTHER);
-        response.getHeaders().add(HttpHeaders.LOCATION, "/swagger-ui/");
+        response.getHeaders().add(HttpHeaders.LOCATION, "/swagger-ui.html");
         return response.setComplete();
     }
     

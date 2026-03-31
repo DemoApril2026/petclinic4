@@ -1,4 +1,4 @@
-FROM openjdk:11-jre as builder
+FROM eclipse-temurin:17-jre as builder
 WORKDIR application
 ARG ARTIFACT_NAME
 COPY ${ARTIFACT_NAME}.jar application.jar
@@ -11,8 +11,8 @@ RUN tar xzf dockerize.tar.gz
 RUN chmod +x dockerize
 
 
-# wget is not installed on adoptopenjdk:11-jre-hotspot
-FROM adoptopenjdk:11-jre-hotspot
+# wget is not installed on eclipse-temurin:17-jre
+FROM eclipse-temurin:17-jre
 
 WORKDIR application
 

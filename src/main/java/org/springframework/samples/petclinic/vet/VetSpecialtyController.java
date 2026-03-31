@@ -22,11 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -41,7 +41,7 @@ import reactor.core.publisher.Mono;
  allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
  origins = "*"
 )
-@Api(value="/petclinic/api/specialties", tags = {"Veterinarian Specialties Api"})
+@Tag(name = "Veterinarian Specialties Api")
 public class VetSpecialtyController {
     
     /** Implementation of services for vet specialties. */
@@ -61,21 +61,20 @@ public class VetSpecialtyController {
      *   a {@link Flux} containing {@link VetSpecialty}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all veterinarians specialties from database", 
-                  response=VetSpecialty.class)
+    @Operation(summary = "Read all veterinarians specialties from database")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of veterinarians specialties"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "List of veterinarians specialties"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Set<VetSpecialty>>> getAllVetsSpecialties() {
         return vetServices.listVetSpecialties().map(ResponseEntity::ok);
     }
     
     @GetMapping(value = "/{specialtyId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve veterinarian information by its unique identifier", response=VetSpecialty.class)
+    @Operation(summary = "Retrieve veterinarian information by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "the identifier exists and related veterinarian specialty is returned"), 
-        @ApiResponse(code = 400, message= "The name was not valid"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })        
+        @ApiResponse(responseCode = "200", description = "the identifier exists and related veterinarian specialty is returned"), 
+        @ApiResponse(responseCode = "400", description = "The name was not valid"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })        
     public Mono<ResponseEntity<VetSpecialty>> getSpecialty(
             @PathVariable("specialtyId") 
             @Parameter(required = true,example = "surgery",

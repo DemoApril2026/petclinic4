@@ -33,8 +33,7 @@ public class SecurityEnabledConfig {
                    .authorizeExchange()
                      // Exclude public resources from the filter
                      .pathMatchers("/", "/csrf", 
-                             "/v2/api-docs", 
-                             "/swagger-resources/**",
+                             "/v3/api-docs/**", 
                              "/swagger-ui.html", 
                              "/swagger-ui/**",
                              "/webjars/**").permitAll()

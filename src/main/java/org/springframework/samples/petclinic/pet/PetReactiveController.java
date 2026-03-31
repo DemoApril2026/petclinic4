@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -48,7 +48,7 @@ import reactor.core.publisher.Mono;
  allowedHeaders = {"x-requested-with", "origin", "content-type", "accept"},
  origins = "*"
 )
-@Api(value="/api/pets", tags = {"Pets Api"})
+@Tag(name = "Pets Api")
 public class PetReactiveController {
     
     /** Inject service implementation layer. */
@@ -66,10 +66,10 @@ public class PetReactiveController {
      *   a {@link Flux} containing {@link PetEntity}
      */
     @GetMapping(produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Read all pets in database", response=Pet.class)
+    @Operation(summary = "Read all pets in database")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "List of pets (even if empty)"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "List of pets (even if empty)"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Flux<Pet> findAllPets() {
         return petServices.findAllPets();
     }
@@ -83,12 +83,12 @@ public class PetReactiveController {
      *      a {@link Mono} of {@link OwnerEntity} or empty response with not found (404) code
      */
     @GetMapping(value = "/{petId}", produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Retrieve pet information by its unique identifier", response=Pet.class)
+    @Operation(summary = "Retrieve pet information by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 200, message= "the identifier exists and related pet is returned"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"), 
-        @ApiResponse(code = 404, message= "the identifier does not exist in DB"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "200", description = "the identifier exists and related pet is returned"), 
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"), 
+        @ApiResponse(responseCode = "404", description = "the identifier does not exist in DB"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Pet>> findPetById(@PathVariable("petId") @Parameter(
                required = true,example = "1ff2fbd9-bbb0-4cc1-ba37-61966aa7c5e6",
                description = "Unique identifier of a Pet") @NotBlank String petId) {
@@ -108,12 +108,11 @@ public class PetReactiveController {
      *      the created owner.
      */
     @PostMapping(produces = APPLICATION_JSON_VALUE, consumes=APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Create a new Pet, an unique identifier is generated and returned", 
-                  response=Pet.class)
+    @Operation(summary = "Create a new Pet, an unique identifier is generated and returned")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The pet has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "Invalid Dto provided"), 
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The pet has been created, uuid is provided in header"), 
+        @ApiResponse(responseCode = "400", description = "Invalid Dto provided"), 
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Pet>> createPet(
             UriComponentsBuilder uc, 
             @RequestBody @Valid Pet pet) {
@@ -137,12 +136,11 @@ public class PetReactiveController {
     @PutMapping(value="/{petId}",  
                 consumes=APPLICATION_JSON_VALUE,
                 produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(value= "Upsert a pet (no read before write as for Cassandra)", 
-                  response=Pet.class)
+    @Operation(summary = "Upsert a pet (no read before write as for Cassandra)")
     @ApiResponses({
-        @ApiResponse(code = 201, message= "The pet has been created, uuid is provided in header"), 
-        @ApiResponse(code = 400, message= "The pet bean was malformed or does not provide valid id"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "201", description = "The pet has been created, uuid is provided in header"), 
+        @ApiResponse(responseCode = "400", description = "The pet bean was malformed or does not provide valid id"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Pet>> upsertPet(
             UriComponentsBuilder uc, 
             @PathVariable("petId") @NotBlank String petId, 
@@ -161,11 +159,11 @@ public class PetReactiveController {
      * @return
      */
     @DeleteMapping("/{petId}")
-    @ApiOperation(value= "Delete a pet by its unique identifier", response=Void.class)
+    @Operation(summary = "Delete a pet by its unique identifier")
     @ApiResponses({
-        @ApiResponse(code = 204, message= "The pet has been deleted"), 
-        @ApiResponse(code = 400, message= "The uid was not a valid UUID"),
-        @ApiResponse(code = 500, message= "Internal technical error") })
+        @ApiResponse(responseCode = "204", description = "The pet has been deleted"), 
+        @ApiResponse(responseCode = "400", description = "The uid was not a valid UUID"),
+        @ApiResponse(responseCode = "500", description = "Internal technical error") })
     public Mono<ResponseEntity<Void>> deleteById(
             @NotBlank 
             @PathVariable("petId") 
